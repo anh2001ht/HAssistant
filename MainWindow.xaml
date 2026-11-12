@@ -1,0 +1,217 @@
+<Window x:Class="SystemAudioTranscript.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Phiên âm hệ thống" Width="1180" Height="660" MinWidth="760" MinHeight="390"
+        WindowStartupLocation="CenterScreen" Background="#F1F5F4" Foreground="#142C29"
+        FontFamily="Segoe UI" FontSize="14" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Window.Resources>
+        <Style x:Key="ToolbarControl" TargetType="ContentControl">
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#143E37" />
+            <Setter Property="BorderBrush" Value="#B8CEC8" />
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource ToolbarControl}" />
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="AnswerCard" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#CCDCD8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+        <Style x:Key="AnswerHeading" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="2,0,0,8" />
+        </Style>
+        <Style x:Key="OutputText" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="#F7FAF9" />
+        </Style>
+        <Style x:Key="OutputHint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#56736C" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Margin" Value="10,9,8,0" />
+        </Style>
+        <Style x:Key="TimingText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#41635C" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="2,5,0,0" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StatusText" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,6">
+            <ToggleButton x:Name="PinButton" DockPanel.Dock="Right" Margin="8,0,0,0"
+                          ToolTip="Giữ cửa sổ trên các ứng dụng khác"
+                          IsChecked="{Binding Topmost, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton" BasedOn="{StaticResource ToolbarControl}">
+                        <Setter Property="Content" Value="Ghim" />
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Content" Value="Bỏ ghim" />
+                                <Setter Property="Background" Value="#D2ECE1" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+            <WrapPanel>
+                <Button x:Name="CaptureButton" Content="Bắt đầu nghe" IsEnabled="False" Click="ToggleCapture_Click"
+                        Background="#D2ECE1" BorderBrush="#8CB9A8" FontWeight="SemiBold" />
+                <ComboBox x:Name="ReplyProvider" Width="155" Margin="6,0,0,0" SelectedIndex="0"
+                          SelectedValuePath="Tag" SelectionChanged="ReplyProvider_Changed" AutomationProperties.Name="API trả lời">
+                    <ComboBoxItem Content="Gemini + Z.AI" Tag="compare" />
+                    <ComboBoxItem Content="Gemini" Tag="gemini" />
+                    <ComboBoxItem Content="Codex" Tag="codex" />
+                </ComboBox>
+                <Button x:Name="NewConversationButton" Content="Cuộc trò chuyện mới" Margin="6,0,0,0"
+                        Click="NewConversation_Click" />
+                <Button x:Name="ShortcutButton" Content="Phím tắt" Margin="6,0,0,0" Click="Shortcut_Click"
+                        PreviewKeyDown="Shortcut_KeyDown" LostKeyboardFocus="Shortcut_LostFocus" />
+            </WrapPanel>
+        </DockPanel>
+
+        <Expander Grid.Row="1" Header="Thiết lập" Margin="0,0,0,4">
+            <Grid Margin="2,5,2,4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="Devices" DisplayMemberPath="Label" SelectionChanged="Device_Changed"
+                          ToolTip="Thiết bị phát" AutomationProperties.Name="Thiết bị phát" />
+                <Button x:Name="RefreshDevices" Grid.Column="1" Content="Làm mới" Margin="6,0" Click="Refresh_Click" />
+                <ComboBox x:Name="SpeechLanguage" Grid.Column="2" SelectedIndex="0" SelectedValuePath="Tag"
+                          ToolTip="Ngôn ngữ lời nói" AutomationProperties.Name="Ngôn ngữ lời nói">
+                    <ComboBoxItem Content="Tiếng Anh (mặc định)" Tag="en" />
+                    <ComboBoxItem Content="Tiếng Việt" Tag="vi" />
+                    <ComboBoxItem Content="Tự nhận diện" Tag="auto" />
+                </ComboBox>
+                <Button x:Name="ApiKeysButton" Grid.Column="3" Content="API key" Margin="6,0,0,0" Click="ApiKeys_Click" />
+                <DockPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,7,0,0">
+                    <Button DockPanel.Dock="Right" Content="Dung lượng API" Click="ApiUsage_Click" />
+                    <CheckBox x:Name="SharedShortcutBox" VerticalAlignment="Center"
+                              Content="Dùng chung phím tắt" Click="SharedShortcut_Click"
+                              ToolTip="Các ứng dụng khác vẫn nhận được cùng tổ hợp phím." />
+                </DockPanel>
+            </Grid>
+        </Expander>
+
+        <StackPanel Grid.Row="2" Margin="2,0,2,6">
+            <TextBlock x:Name="Status" Foreground="#315A52" Style="{StaticResource StatusText}" AutomationProperties.LiveSetting="Polite" />
+            <TextBlock x:Name="ShortcutStatus" Style="{StaticResource TimingText}" />
+            <TextBlock x:Name="CaptureWarning" Foreground="#855012" TextWrapping="Wrap" Visibility="Collapsed" />
+            <TextBlock x:Name="Dropped" Foreground="#855012" Style="{StaticResource StatusText}" />
+        </StackPanel>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="DetailGutter" Width="10" />
+                <ColumnDefinition x:Name="DetailColumn" Width="1.2*" />
+                <ColumnDefinition x:Name="ZaiGutter" Width="10" />
+                <ColumnDefinition x:Name="ZaiColumn" Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource AnswerCard}">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Button x:Name="OpenChatButton" DockPanel.Dock="Right" Content="Mở chat" Click="OpenChat_Click" Visibility="Collapsed" />
+                        <TextBlock x:Name="ReplyHeading" Text="Gemini · Ngắn gọn" Style="{StaticResource AnswerHeading}" />
+                    </DockPanel>
+                    <Button x:Name="RetryButton" DockPanel.Dock="Bottom" Content="Gửi lại" Click="Retry_Click"
+                            Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                    <TextBlock x:Name="GeminiTiming" DockPanel.Dock="Bottom" Style="{StaticResource TimingText}" />
+                    <Grid>
+                        <TextBox x:Name="ReplyText" Style="{StaticResource OutputText}" AutomationProperties.Name="Phản hồi ngắn" />
+                        <TextBlock x:Name="ReplyPlaceholder" Style="{StaticResource OutputHint}" Visibility="Collapsed" />
+                    </Grid>
+                </DockPanel>
+            </Border>
+            <Border x:Name="DetailPane" Grid.Column="2" Style="{StaticResource AnswerCard}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Gemini · Chi tiết" Style="{StaticResource AnswerHeading}" />
+                    <Button x:Name="DetailRetryButton" DockPanel.Dock="Bottom" Content="Gửi lại bản chi tiết" Click="Retry_Click"
+                            Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                    <TextBlock x:Name="DetailTiming" DockPanel.Dock="Bottom" Style="{StaticResource TimingText}" />
+                    <Grid>
+                        <TextBox x:Name="DetailReplyText" Style="{StaticResource OutputText}" AutomationProperties.Name="Phản hồi Gemini chi tiết" />
+                        <TextBlock x:Name="DetailPlaceholder" Style="{StaticResource OutputHint}" Visibility="Collapsed" />
+                    </Grid>
+                </DockPanel>
+            </Border>
+            <Border x:Name="ZaiPane" Grid.Column="4" Style="{StaticResource AnswerCard}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Z.AI" Style="{StaticResource AnswerHeading}" />
+                    <Button x:Name="ZaiRetryButton" DockPanel.Dock="Bottom" Content="Gửi lại Z.AI" Click="Retry_Click"
+                            Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                    <TextBlock x:Name="ZaiTiming" DockPanel.Dock="Bottom" Style="{StaticResource TimingText}" />
+                    <Grid>
+                        <TextBox x:Name="ZaiReplyText" Style="{StaticResource OutputText}" AutomationProperties.Name="Phản hồi Z.AI" />
+                        <TextBlock x:Name="ZaiPlaceholder" Style="{StaticResource OutputHint}" Visibility="Collapsed" />
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Expander Grid.Row="4" Header="Bản phiên âm" Margin="0,8,0,0">
+            <DockPanel Margin="0,5,0,0">
+                <Button x:Name="SaveButton" DockPanel.Dock="Right" VerticalAlignment="Top" Content="Lưu .txt"
+                        Click="Save_Click" IsEnabled="False" Margin="8,0,0,0" />
+                <StackPanel>
+                    <Grid>
+                        <TextBox x:Name="Transcript" Height="82" Style="{StaticResource OutputText}" AutomationProperties.Name="Bản phiên âm" />
+                        <TextBlock x:Name="Placeholder" Style="{StaticResource OutputHint}" Text="Chưa có bản phiên âm." />
+                    </Grid>
+                    <Border x:Name="PreviewPanel" Visibility="Collapsed" Background="#E8F4EE" CornerRadius="5"
+                            Padding="8,4" Margin="0,4,0,0">
+                        <TextBlock x:Name="LivePreview" TextWrapping="Wrap" MaxHeight="46" TextTrimming="CharacterEllipsis"
+                                   AutomationProperties.Name="Phiên âm tạm" />
+                    </Border>
+                    <TextBlock x:Name="TranscriptionTiming" Style="{StaticResource TimingText}" />
+                </StackPanel>
+            </DockPanel>
+        </Expander>
+    </Grid>
+</Window>

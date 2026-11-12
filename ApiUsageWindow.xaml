@@ -1,0 +1,39 @@
+<Window x:Class="SystemAudioTranscript.ApiUsageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dung lượng API" Width="520" SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner" FontFamily="Segoe UI" FontSize="14"
+        Background="#F1F5F4" Foreground="#142C29">
+    <StackPanel Margin="20">
+        <TextBlock Text="Dung lượng API" FontSize="22" FontWeight="SemiBold" />
+        <TextBlock Margin="0,6,0,12" TextWrapping="Wrap" Foreground="#41635C"
+                   Text="Ngân sách token tự đặt cho ứng dụng. Bộ đếm tính các phản hồi hoàn tất hôm nay theo giờ Windows. Hạn mức tài khoản xem trên trang của nhà cung cấp." />
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Content="Google AI Studio" Tag="https://aistudio.google.com/rate-limit"
+                    Click="OpenDashboard_Click" Padding="7,4" />
+            <TextBlock Text="Gemini" VerticalAlignment="Center" FontWeight="SemiBold" />
+        </DockPanel>
+        <TextBlock x:Name="GeminiUsage" TextWrapping="Wrap" Margin="0,3,0,5" />
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Left" Text="Ngân sách ngày (token)" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox x:Name="GeminiBudget" Width="135" HorizontalAlignment="Left" Padding="4"
+                     AutomationProperties.Name="Ngân sách token ngày Gemini" />
+        </DockPanel>
+        <DockPanel Margin="0,12,0,0">
+            <Button DockPanel.Dock="Right" Content="Số dư Z.AI" Tag="https://z.ai/manage-apikey/billing"
+                    Click="OpenDashboard_Click" Padding="7,4" />
+            <TextBlock Text="Z.AI" VerticalAlignment="Center" FontWeight="SemiBold" />
+        </DockPanel>
+        <TextBlock x:Name="ZaiUsage" TextWrapping="Wrap" Margin="0,3,0,5" />
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Left" Text="Ngân sách ngày (token)" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox x:Name="ZaiBudget" Width="135" HorizontalAlignment="Left" Padding="4"
+                     AutomationProperties.Name="Ngân sách token ngày Z.AI" />
+        </DockPanel>
+        <TextBlock x:Name="Status" Foreground="#855012" TextWrapping="Wrap" Margin="0,7,0,0" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,9,0,0">
+            <Button Content="Đóng" IsCancel="True" Margin="0,0,6,0" Padding="12,5" />
+            <Button Content="Lưu ngân sách" IsDefault="True" Click="Save_Click" Padding="12,5" />
+        </StackPanel>
+    </StackPanel>
+</Window>

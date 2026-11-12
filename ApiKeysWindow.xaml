@@ -1,0 +1,24 @@
+<Window x:Class="SystemAudioTranscript.ApiKeysWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="API key" Width="480" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" FontFamily="Segoe UI" FontSize="14"
+        Background="#F1F5F4" Foreground="#142C29">
+    <StackPanel Margin="24">
+        <TextBlock Text="API key" FontSize="25" FontWeight="SemiBold" />
+        <TextBlock Margin="0,6,0,16" TextWrapping="Wrap" Foreground="#41635C"
+                   Text="Ứng dụng dùng lại key đã lưu khi mở lại bằng cùng tài khoản Windows. Ô nhập để trống cho đến khi bạn muốn đổi key." />
+        <Label Content="Gemini" Target="{Binding ElementName=GeminiKey}" Padding="0" FontWeight="SemiBold" />
+        <TextBlock x:Name="GeminiStatus" Margin="0,3,0,6" Foreground="#41635C" TextWrapping="Wrap" />
+        <PasswordBox x:Name="GeminiKey" AutomationProperties.Name="API key Gemini" Padding="7" />
+        <Label Content="Z.AI" Target="{Binding ElementName=ZaiKey}" Margin="0,13,0,0" Padding="0" FontWeight="SemiBold" />
+        <TextBlock x:Name="ZaiStatus" Margin="0,3,0,6" Foreground="#41635C" TextWrapping="Wrap" />
+        <PasswordBox x:Name="ZaiKey" AutomationProperties.Name="API key Z.AI" Padding="7" />
+        <TextBlock x:Name="CaptureWarning" Visibility="Collapsed" Foreground="#855012" TextWrapping="Wrap" Margin="0,10,0,0" />
+        <TextBlock x:Name="SaveError" Foreground="#855012" TextWrapping="Wrap" Margin="0,10,0,0" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="Đóng" IsCancel="True" Padding="16,7" Margin="0,0,8,0" />
+            <Button Content="Lưu" IsDefault="True" Click="Save_Click" Padding="16,7" />
+        </StackPanel>
+    </StackPanel>
+</Window>
